@@ -220,6 +220,13 @@ Deno.serve(async (req: Request) => {
         return json({ products: data ?? [] });
       }
 
+      case "adminListProducts": {
+        const auth = await requireAuth(body);
+        if (!auth?.admin) return json({ error: "forbidden" }, 403);
+        const { data } = await admin.from("products").select("*").order("created_at", { ascending: false });
+        return json({ products: data ?? [] });
+      }
+
       case "adminModerateListing": {
         const auth = await requireAuth(body);
         if (!auth?.admin) return json({ error: "forbidden" }, 403);
@@ -232,7 +239,7 @@ Deno.serve(async (req: Request) => {
         const auth = await requireAuth(body);
         if (!auth?.admin) return json({ error: "forbidden" }, 403);
         const p = body.product ?? {};
-        const row = {
+        const row: Record<string, unknown> = {
           title: p.title,
           brand: p.brand ?? null,
           cpu: p.cpu ?? null,
@@ -242,21 +249,25 @@ Deno.serve(async (req: Request) => {
           screen_size: p.screen_size ?? null,
           condition: p.condition ?? "new",
           price: p.price,
+          discount_price: p.discount_price ?? null,
           currency: p.currency ?? "UZS",
           images: p.images ?? [],
           description: p.description ?? null,
           category: p.category ?? "other",
           tags: p.tags ?? [],
           in_stock: p.in_stock ?? true,
-          source: "shop",
-          status: "approved",
           updated_at: new Date().toISOString(),
         };
         if (p.id) {
+          // Editing an existing product (shop item OR a user listing) — admin can edit
+          // anything, but we must not clobber its existing source/status/seller fields.
+          if (p.status) row.status = p.status;
           const { data, error } = await admin.from("products").update(row).eq("id", p.id).select().single();
           if (error) return json({ error: error.message }, 500);
           return json({ product: data });
         } else {
+          row.source = "shop";
+          row.status = "approved";
           const { data, error } = await admin.from("products").insert(row).select().single();
           if (error) return json({ error: error.message }, 500);
           return json({ product: data });
@@ -267,6 +278,42 @@ Deno.serve(async (req: Request) => {
         const auth = await requireAuth(body);
         if (!auth?.admin) return json({ error: "forbidden" }, 403);
         const { error } = await admin.from("products").delete().eq("id", body.productId);
+        if (error) return json({ error: error.message }, 500);
+        return json({ ok: true });
+      }
+
+      case "adminListBrands": {
+        const auth = await requireAuth(body);
+        if (!auth?.admin) return json({ error: "forbidden" }, 403);
+        const { data } = await admin.from("brands").select("*").order("sort_order", { ascending: true });
+        return json({ brands: data ?? [] });
+      }
+
+      case "adminUpsertBrand": {
+        const auth = await requireAuth(body);
+        if (!auth?.admin) return json({ error: "forbidden" }, 403);
+        const b = body.brand ?? {};
+        const row = {
+          name: b.name,
+          slug: String(b.name ?? "").toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, ""),
+          sort_order: b.sort_order ?? 0,
+          is_active: b.is_active ?? true,
+        };
+        if (b.id) {
+          const { data, error } = await admin.from("brands").update(row).eq("id", b.id).select().single();
+          if (error) return json({ error: error.message }, 500);
+          return json({ brand: data });
+        } else {
+          const { data, error } = await admin.from("brands").insert(row).select().single();
+          if (error) return json({ error: error.message }, 500);
+          return json({ brand: data });
+        }
+      }
+
+      case "adminDeleteBrand": {
+        const auth = await requireAuth(body);
+        if (!auth?.admin) return json({ error: "forbidden" }, 403);
+        const { error } = await admin.from("brands").delete().eq("id", body.brandId);
         if (error) return json({ error: error.message }, 500);
         return json({ ok: true });
       }

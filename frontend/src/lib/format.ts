@@ -5,12 +5,7 @@ export function formatPrice(price: number, currency = 'UZS'): string {
   return `${formatted} ${symbol}`
 }
 
-export const CATEGORY_LABELS: Record<string, string> = {
-  gaming: '🎮 Gaming',
-  business: '💼 Biznes',
-  student: '🎓 Talaba',
-  design: '🎨 Dizayn',
-  office: '📊 Ofis',
-  budget: '💵 Byudjet',
-  other: '💻 Boshqa',
+export function discountPercent(price: number, discountPrice: number | null | undefined): number | null {
+  if (discountPrice == null || discountPrice >= price || price <= 0) return null
+  return Math.round((1 - discountPrice / price) * 100)
 }

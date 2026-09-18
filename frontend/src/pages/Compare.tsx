@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabase'
 import type { Product } from '../lib/types'
 import { formatPrice } from '../lib/format'
 import { useCompare } from '../lib/CompareContext'
+import { Check, Scale } from 'lucide-react'
 
 const ROWS: { key: keyof Product; label: string; suffix?: string; higherIsBetter?: boolean }[] = [
   { key: 'price', label: 'Narx', higherIsBetter: false },
@@ -31,7 +32,7 @@ export default function Compare() {
   if (!ids.length) {
     return (
       <div className="flex flex-col items-center gap-3 px-6 pt-20 text-center">
-        <span className="text-4xl">⚖️</span>
+        <Scale className="h-10 w-10 text-slate-300 dark:text-slate-600" />
         <p className="text-sm text-slate-500 dark:text-slate-400">
           Taqqoslash uchun do'kondan 2-3 ta noutbukni tanlang
         </p>
@@ -93,7 +94,9 @@ export default function Compare() {
                         : `${raw}${row.suffix ?? ''}`
                     return (
                       <td key={p.id} className={`p-3 text-xs ${i === bestIdx ? 'font-bold text-green-600 dark:text-green-400' : 'text-slate-700 dark:text-slate-200'}`}>
-                        {display} {i === bestIdx && '✓'}
+                        <span className="inline-flex items-center gap-1">
+                          {display} {i === bestIdx && <Check className="h-3.5 w-3.5" />}
+                        </span>
                       </td>
                     )
                   })}

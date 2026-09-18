@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useUser } from '../lib/UserContext'
+import { useTheme } from '../lib/ThemeContext'
 import { callApi } from '../lib/api'
 import type { Product } from '../lib/types'
 import { formatPrice } from '../lib/format'
+import { ChevronRight, Moon, Settings, Sun, UserRound } from 'lucide-react'
 
 const STATUS_LABEL: Record<string, { text: string; cls: string }> = {
   pending: { text: 'Ko’rib chiqilmoqda', cls: 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300' },
@@ -14,6 +16,7 @@ const STATUS_LABEL: Record<string, { text: string; cls: string }> = {
 
 export default function Profile() {
   const { user, isAdmin, loading } = useUser()
+  const { theme, toggleTheme } = useTheme()
   const [listings, setListings] = useState<Product[]>([])
   const [favorites, setFavorites] = useState<Product[]>([])
   const [tab, setTab] = useState<'listings' | 'favorites'>('listings')
@@ -37,10 +40,10 @@ export default function Profile() {
   }
 
   return (
-    <div className="px-4 pb-8 pt-6">
+    <div className="mx-auto max-w-xl px-4 pb-8 pt-6">
       <div className="flex items-center gap-3">
         <div className="flex h-14 w-14 items-center justify-center overflow-hidden rounded-full bg-blue-100 text-xl font-bold text-blue-600 dark:bg-blue-900/40 dark:text-blue-300">
-          {user.photo_url ? <img src={user.photo_url} className="h-full w-full object-cover" /> : (user.first_name?.[0] ?? '👤')}
+          {user.photo_url ? <img src={user.photo_url} className="h-full w-full object-cover" /> : (user.first_name?.[0] ?? <UserRound className="h-6 w-6" />)}
         </div>
         <div>
           <h1 className="text-base font-bold text-slate-900 dark:text-white">
@@ -50,10 +53,23 @@ export default function Profile() {
         </div>
       </div>
 
+      <button
+        onClick={toggleTheme}
+        className="mt-4 flex w-full items-center justify-between rounded-xl bg-white px-4 py-3 text-sm font-medium text-slate-700 ring-1 ring-black/5 dark:bg-[#1a1d27] dark:text-slate-200 dark:ring-white/10"
+      >
+        <span className="flex items-center gap-2">
+          {theme === 'dark' ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
+          {theme === 'dark' ? 'Tungi rejim' : 'Kunduzgi rejim'}
+        </span>
+        <span className={`relative h-6 w-11 rounded-full transition-colors ${theme === 'dark' ? 'bg-blue-600' : 'bg-slate-300'}`}>
+          <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-white transition-transform ${theme === 'dark' ? 'translate-x-5' : 'translate-x-0.5'}`} />
+        </span>
+      </button>
+
       {isAdmin && (
-        <Link to="/admin" className="mt-4 flex items-center justify-between rounded-xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white dark:bg-blue-600">
-          🛠️ Admin panel
-          <span>→</span>
+        <Link to="/admin" className="mt-3 flex items-center justify-between rounded-xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white dark:bg-blue-600">
+          <span className="flex items-center gap-2"><Settings className="h-4 w-4" /> Admin panel</span>
+          <ChevronRight className="h-4 w-4" />
         </Link>
       )}
 

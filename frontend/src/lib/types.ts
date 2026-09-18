@@ -13,6 +13,7 @@ export interface Product {
   screen_size: number | null
   condition: Condition
   price: number
+  discount_price: number | null
   currency: string
   images: string[]
   description: string | null
@@ -35,6 +36,15 @@ export interface Banner {
   link_url: string | null
   is_active: boolean
   sort_order: number
+}
+
+export interface Brand {
+  id: string
+  name: string
+  slug: string
+  icon: string | null
+  sort_order: number
+  is_active: boolean
 }
 
 export interface TgUserInfo {

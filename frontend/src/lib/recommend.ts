@@ -3,7 +3,6 @@ import type { Category, Product } from './types'
 export interface QuizOption {
   value: string
   label: string
-  emoji: string
 }
 
 export interface QuizQuestion {
@@ -26,58 +25,58 @@ export const QUIZ_QUESTIONS: QuizQuestion[] = [
     key: 'purpose',
     question: 'Kompyuterni asosan nima uchun ishlatasiz?',
     options: [
-      { value: 'gaming', label: "O'yin o'ynash", emoji: '🎮' },
-      { value: 'design', label: 'Dizayn / video montaj', emoji: '🎨' },
-      { value: 'programming', label: 'Dasturlash', emoji: '💻' },
-      { value: 'office', label: "Ish / ofis dasturlari", emoji: '📊' },
-      { value: 'student', label: "O'qish / talaba", emoji: '🎓' },
-      { value: 'browsing', label: 'Internet / kundalik ishlar', emoji: '🌐' },
+      { value: 'gaming', label: "O'yin o'ynash" },
+      { value: 'design', label: 'Dizayn / video montaj' },
+      { value: 'programming', label: 'Dasturlash' },
+      { value: 'office', label: "Ish / ofis dasturlari" },
+      { value: 'student', label: "O'qish / talaba" },
+      { value: 'browsing', label: 'Internet / kundalik ishlar' },
     ],
   },
   {
     key: 'budget',
     question: 'Byudjetingiz qancha?',
     options: [
-      { value: 'low', label: "8 mln so'mgacha", emoji: '💵' },
-      { value: 'mid', label: "8 - 15 mln so'm", emoji: '💰' },
-      { value: 'high', label: "15 - 25 mln so'm", emoji: '💎' },
-      { value: 'premium', label: "25 mln so'mdan yuqori", emoji: '👑' },
+      { value: 'low', label: "8 mln so'mgacha" },
+      { value: 'mid', label: "8 - 15 mln so'm" },
+      { value: 'high', label: "15 - 25 mln so'm" },
+      { value: 'premium', label: "25 mln so'mdan yuqori" },
     ],
   },
   {
     key: 'performance',
     question: 'Qanday unumdorlik kerak?',
     options: [
-      { value: 'light', label: "Yengil ishlar (matn, brauzer)", emoji: '🍃' },
-      { value: 'medium', label: "O'rtacha (office, video ko'rish)", emoji: '⚙️' },
-      { value: 'high', label: "Yuqori (render, og'ir o'yinlar, AI)", emoji: '🚀' },
+      { value: 'light', label: "Yengil ishlar (matn, brauzer)" },
+      { value: 'medium', label: "O'rtacha (office, video ko'rish)" },
+      { value: 'high', label: "Yuqori (render, og'ir o'yinlar, AI)" },
     ],
   },
   {
     key: 'ram',
     question: "Qancha xotira (RAM) kerak bo'ladi?",
     options: [
-      { value: '8', label: '8 GB yetarli', emoji: '🔹' },
-      { value: '16', label: '16 GB', emoji: '🔸' },
-      { value: '32', label: "32 GB va undan ko'p", emoji: '🔶' },
+      { value: '8', label: '8 GB yetarli' },
+      { value: '16', label: '16 GB' },
+      { value: '32', label: "32 GB va undan ko'p" },
     ],
   },
   {
     key: 'portability',
     question: 'Portativlik sizga qanchalik muhim?',
     options: [
-      { value: 'ultrabook', label: 'Yengil va kichik bo’lsin', emoji: '🪶' },
-      { value: 'any', label: "Farqi yo'q", emoji: '🤷' },
-      { value: 'big', label: 'Katta ekran muhim', emoji: '🖥️' },
+      { value: 'ultrabook', label: 'Yengil va kichik bo’lsin' },
+      { value: 'any', label: "Farqi yo'q" },
+      { value: 'big', label: 'Katta ekran muhim' },
     ],
   },
   {
     key: 'condition',
     question: 'Qanday holatdagi noutbuk qidiryapsiz?',
     options: [
-      { value: 'new', label: 'Faqat yangi', emoji: '✨' },
-      { value: 'used', label: "Ishlatilgan ham bo'ladi (arzonroq)", emoji: '♻️' },
-      { value: 'any', label: "Farqi yo'q", emoji: '🤝' },
+      { value: 'new', label: 'Faqat yangi' },
+      { value: 'used', label: "Ishlatilgan ham bo'ladi (arzonroq)" },
+      { value: 'any', label: "Farqi yo'q" },
     ],
   },
 ]

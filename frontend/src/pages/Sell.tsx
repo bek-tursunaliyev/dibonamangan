@@ -1,10 +1,13 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { callApi } from '../lib/api'
+import { supabase } from '../lib/supabase'
 import { useUser } from '../lib/UserContext'
 import { haptic } from '../lib/telegram'
-import { CATEGORY_LABELS } from '../lib/format'
+import { CATEGORY_TEXT_LABELS } from '../lib/icons'
+import type { Brand } from '../lib/types'
+import { Camera, CheckCircle2, Loader2, X } from 'lucide-react'
 
-const CATEGORY_OPTIONS = Object.keys(CATEGORY_LABELS)
+const CATEGORY_OPTIONS = Object.keys(CATEGORY_TEXT_LABELS)
 
 function fileToDataUrl(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -17,6 +20,7 @@ function fileToDataUrl(file: File): Promise<string> {
 
 export default function Sell() {
   const { user, loading } = useUser()
+  const [brands, setBrands] = useState<Brand[]>([])
   const [images, setImages] = useState<string[]>([])
   const [uploading, setUploading] = useState(false)
   const [submitting, setSubmitting] = useState(false)
@@ -25,6 +29,10 @@ export default function Sell() {
     title: '', brand: '', cpu: '', ram_gb: '', storage: '', gpu: '',
     screen_size: '', price: '', category: 'other', description: '', seller_contact: '',
   })
+
+  useEffect(() => {
+    supabase.from('brands').select('*').eq('is_active', true).order('sort_order').then(({ data }) => setBrands((data as Brand[]) ?? []))
+  }, [])
 
   const set = (key: string, value: string) => setForm((f) => ({ ...f, [key]: value }))
 
@@ -82,7 +90,7 @@ export default function Sell() {
   if (done) {
     return (
       <div className="flex flex-col items-center gap-3 px-6 pt-20 text-center">
-        <span className="text-4xl">✅</span>
+        <CheckCircle2 className="h-12 w-12 text-green-500" />
         <h2 className="text-lg font-bold text-slate-900 dark:text-white">E'lon yuborildi!</h2>
         <p className="text-sm text-slate-500 dark:text-slate-400">
           Admin tekshirib chiqqach, e'loningiz do'konda paydo bo'ladi. Buni Profil bo'limidan kuzatishingiz mumkin.
@@ -92,7 +100,7 @@ export default function Sell() {
   }
 
   return (
-    <div className="px-4 pb-8 pt-4">
+    <div className="mx-auto max-w-xl px-4 pb-8 pt-4">
       <h1 className="mb-1 text-lg font-bold text-slate-900 dark:text-white">Noutbukingizni soting</h1>
       <p className="mb-4 text-xs text-slate-500 dark:text-slate-400">
         Ma'lumot va rasmlarni yuklang — admin tasdiqlagach e'lon do'konda chiqadi.
@@ -104,12 +112,14 @@ export default function Sell() {
           {images.map((img, i) => (
             <div key={i} className="relative h-16 w-16 overflow-hidden rounded-lg">
               <img src={img} className="h-full w-full object-cover" />
-              <button onClick={() => setImages((prev) => prev.filter((_, idx) => idx !== i))} className="absolute right-0 top-0 h-4 w-4 rounded-bl bg-black/60 text-[10px] text-white">✕</button>
+              <button onClick={() => setImages((prev) => prev.filter((_, idx) => idx !== i))} className="absolute right-0 top-0 flex h-4 w-4 items-center justify-center rounded-bl bg-black/60 text-white">
+                <X className="h-3 w-3" />
+              </button>
             </div>
           ))}
           {images.length < 5 && (
             <label className="flex h-16 w-16 cursor-pointer items-center justify-center rounded-lg border-2 border-dashed border-slate-300 text-slate-400 dark:border-slate-700">
-              {uploading ? '⏳' : '📷'}
+              {uploading ? <Loader2 className="h-5 w-5 animate-spin" /> : <Camera className="h-5 w-5" />}
               <input type="file" accept="image/*" multiple className="hidden" onChange={(e) => handleFiles(e.target.files)} />
             </label>
           )}
@@ -119,7 +129,17 @@ export default function Sell() {
       <div className="space-y-3">
         <Field label="Nomi (masalan: ASUS TUF Gaming F15)" value={form.title} onChange={(v) => set('title', v)} required />
         <div className="grid grid-cols-2 gap-3">
-          <Field label="Brend" value={form.brand} onChange={(v) => set('brand', v)} />
+          <div>
+            <label className="mb-1 block text-xs font-medium text-slate-500 dark:text-slate-400">Brend</label>
+            <select
+              value={form.brand}
+              onChange={(e) => set('brand', e.target.value)}
+              className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm dark:border-white/10 dark:bg-[#1a1d27] dark:text-white"
+            >
+              <option value="">Tanlang</option>
+              {brands.map((b) => <option key={b.id} value={b.name}>{b.name}</option>)}
+            </select>
+          </div>
           <Field label="Narx (so'm)" value={form.price} onChange={(v) => set('price', v)} type="number" required />
         </div>
         <Field label="Protsessor" value={form.cpu} onChange={(v) => set('cpu', v)} placeholder="Intel Core i5-12500H" />
@@ -139,7 +159,7 @@ export default function Sell() {
             className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm dark:border-white/10 dark:bg-[#1a1d27] dark:text-white"
           >
             {CATEGORY_OPTIONS.map((c) => (
-              <option key={c} value={c}>{CATEGORY_LABELS[c]}</option>
+              <option key={c} value={c}>{CATEGORY_TEXT_LABELS[c as keyof typeof CATEGORY_TEXT_LABELS]}</option>
             ))}
           </select>
         </div>

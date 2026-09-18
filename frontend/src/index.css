@@ -2,6 +2,10 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+@theme {
+  --font-sans: "Unbounded", ui-sans-serif, system-ui, sans-serif;
+}
+
 :root {
   color-scheme: light;
 }
@@ -15,6 +19,7 @@ body {
   color: #0f172a;
   -webkit-tap-highlight-color: transparent;
   overscroll-behavior-y: none;
+  font-family: var(--font-sans);
 }
 
 .dark body {

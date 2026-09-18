@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import type { Product } from '../../lib/types'
 import { callApi } from '../../lib/api'
 import { formatPrice } from '../../lib/format'
+import { Check, X } from 'lucide-react'
 
 export default function AdminPending() {
   const [items, setItems] = useState<Product[]>([])
@@ -23,7 +24,7 @@ export default function AdminPending() {
   if (!items.length) return <p className="pt-6 text-center text-sm text-slate-400">Kutilayotgan e'lonlar yo'q</p>
 
   return (
-    <div className="space-y-3">
+    <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
       {items.map((p) => (
         <div key={p.id} className="rounded-2xl bg-white p-3 ring-1 ring-black/5 dark:bg-[#1a1d27] dark:ring-white/10">
           <div className="flex gap-3">
@@ -38,11 +39,11 @@ export default function AdminPending() {
             </div>
           </div>
           <div className="mt-2.5 flex gap-2">
-            <button onClick={() => moderate(p.id, 'approved')} className="flex-1 rounded-lg bg-green-600 py-2 text-xs font-semibold text-white">
-              ✓ Tasdiqlash
+            <button onClick={() => moderate(p.id, 'approved')} className="flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-green-600 py-2 text-xs font-semibold text-white">
+              <Check className="h-3.5 w-3.5" /> Tasdiqlash
             </button>
-            <button onClick={() => moderate(p.id, 'rejected')} className="flex-1 rounded-lg bg-red-500 py-2 text-xs font-semibold text-white">
-              ✕ Rad etish
+            <button onClick={() => moderate(p.id, 'rejected')} className="flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-red-500 py-2 text-xs font-semibold text-white">
+              <X className="h-3.5 w-3.5" /> Rad etish
             </button>
           </div>
         </div>

@@ -1,12 +1,14 @@
 import { Link } from 'react-router-dom'
 import type { Product } from '../lib/types'
-import { formatPrice } from '../lib/format'
+import { formatPrice, discountPercent } from '../lib/format'
 import { useCompare } from '../lib/CompareContext'
+import { Check, Laptop, Scale } from 'lucide-react'
 
 export default function ProductCard({ product }: { product: Product }) {
   const { toggle, isSelected, isFull } = useCompare()
   const selected = isSelected(product.id)
   const img = product.images?.[0]
+  const pct = discountPercent(product.price, product.discount_price)
 
   return (
     <div className="flex flex-col overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-black/5 dark:bg-[#1a1d27] dark:ring-white/10">
@@ -14,7 +16,14 @@ export default function ProductCard({ product }: { product: Product }) {
         {img ? (
           <img src={img} alt={product.title} className="h-full w-full object-cover" loading="lazy" />
         ) : (
-          <div className="flex h-full items-center justify-center text-3xl">💻</div>
+          <div className="flex h-full items-center justify-center">
+            <Laptop className="h-8 w-8 text-slate-300 dark:text-slate-600" />
+          </div>
+        )}
+        {pct && (
+          <span className="absolute right-2 top-2 rounded-full bg-red-500 px-2 py-0.5 text-[10px] font-bold text-white">
+            -{pct}%
+          </span>
         )}
         {product.source === 'user_listing' && (
           <span className="absolute left-2 top-2 rounded-full bg-amber-500 px-2 py-0.5 text-[10px] font-semibold text-white">
@@ -31,19 +40,23 @@ export default function ProductCard({ product }: { product: Product }) {
         <Link to={`/product/${product.id}`} className="line-clamp-2 text-sm font-medium text-slate-800 dark:text-slate-100">
           {product.title}
         </Link>
-        <div className="mt-auto flex items-center justify-between pt-1">
-          <span className="text-sm font-bold text-blue-600 dark:text-blue-400">{formatPrice(product.price, product.currency)}</span>
+        <div className="mt-auto flex items-baseline gap-1.5 pt-1">
+          <span className="text-sm font-bold text-blue-600 dark:text-blue-400">
+            {formatPrice(product.discount_price ?? product.price, product.currency)}
+          </span>
+          {pct && <span className="text-[11px] text-slate-400 line-through">{formatPrice(product.price, product.currency)}</span>}
         </div>
         <button
           onClick={() => toggle(product.id)}
           disabled={!selected && isFull}
-          className={`mt-1 rounded-lg py-1.5 text-xs font-medium transition-colors ${
+          className={`mt-1 flex items-center justify-center gap-1.5 rounded-lg py-1.5 text-xs font-medium transition-colors ${
             selected
               ? 'bg-blue-600 text-white'
               : 'bg-slate-100 text-slate-600 disabled:opacity-40 dark:bg-slate-800 dark:text-slate-300'
           }`}
         >
-          {selected ? '✓ Taqqoslashda' : '⚖️ Taqqoslash'}
+          {selected ? <Check className="h-3.5 w-3.5" /> : <Scale className="h-3.5 w-3.5" />}
+          {selected ? 'Taqqoslashda' : 'Taqqoslash'}
         </button>
       </div>
     </div>

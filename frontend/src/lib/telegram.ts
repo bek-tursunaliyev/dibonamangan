@@ -69,5 +69,4 @@ export function initTelegramApp() {
   if (!tg) return
   tg.ready()
   tg.expand()
-  document.documentElement.classList.toggle('dark', tg.colorScheme === 'dark')
 }
