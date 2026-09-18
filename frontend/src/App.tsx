@@ -1,4 +1,4 @@
-import { HashRouter, Route, Routes, useLocation } from 'react-router-dom'
+import { BrowserRouter, Route, Routes, useLocation } from 'react-router-dom'
 import { useEffect } from 'react'
 import BottomNav from './components/BottomNav'
 import ErrorBoundary from './components/ErrorBoundary'
@@ -24,7 +24,7 @@ export default function App() {
     <ThemeProvider>
       <UserProvider>
         <CompareProvider>
-          <HashRouter>
+          <BrowserRouter>
             <ScrollToTop />
             <div className="mx-auto min-h-screen w-full max-w-[1280px] pb-20">
               <ErrorBoundary>
@@ -40,7 +40,7 @@ export default function App() {
               </ErrorBoundary>
             </div>
             <BottomNav />
-          </HashRouter>
+          </BrowserRouter>
         </CompareProvider>
       </UserProvider>
     </ThemeProvider>
