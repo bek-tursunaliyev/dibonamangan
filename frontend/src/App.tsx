@@ -1,5 +1,5 @@
 import { BrowserRouter, Route, Routes, useLocation } from 'react-router-dom'
-import { useEffect } from 'react'
+import { useEffect, type ReactNode } from 'react'
 import BottomNav from './components/BottomNav'
 import ErrorBoundary from './components/ErrorBoundary'
 import Home from './pages/Home'
@@ -19,6 +19,16 @@ function ScrollToTop() {
   return null
 }
 
+// Keying by pathname forces React to unmount/remount the boundary on every
+// navigation, so a crash on one page can never leave later pages stuck
+// showing the old error state (ErrorBoundary's hasError is otherwise sticky
+// for the lifetime of the app, since <Routes> swapping children doesn't
+// remount its parent).
+function RouteErrorBoundary({ children }: { children: ReactNode }) {
+  const { pathname } = useLocation()
+  return <ErrorBoundary key={pathname}>{children}</ErrorBoundary>
+}
+
 export default function App() {
   return (
     <ThemeProvider>
@@ -27,7 +37,7 @@ export default function App() {
           <BrowserRouter>
             <ScrollToTop />
             <div className="mx-auto min-h-screen w-full max-w-[1280px] pb-20">
-              <ErrorBoundary>
+              <RouteErrorBoundary>
                 <Routes>
                   <Route path="/" element={<Home />} />
                   <Route path="/product/:id" element={<ProductDetail />} />
@@ -37,7 +47,7 @@ export default function App() {
                   <Route path="/profile" element={<Profile />} />
                   <Route path="/admin" element={<Admin />} />
                 </Routes>
-              </ErrorBoundary>
+              </RouteErrorBoundary>
             </div>
             <BottomNav />
           </BrowserRouter>
